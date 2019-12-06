@@ -18,11 +18,9 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"go/build"
 	"io/ioutil"
 	"math"
 	"os"
-	"path/filepath"
 	"sort"
 	"text/tabwriter"
 
@@ -81,7 +79,6 @@ type Logger interface {
 type Verifier struct {
 	Out            Logger
 	MinCov         float64
-	GoSrcPath      string
 	PrintSrc       bool
 	PrintFunctions bool
 }
@@ -116,9 +113,11 @@ func (v Verifier) ReportCoverage(
 			}
 
 			var ok bool
-			cfgPkg, ok = cfg.GetPackage(pkg)
 
+			cfgPkg, ok = cfg.GetPackage(pkg)
 			if !ok {
+				log.Debugf("could not find package for name %v", pkg)
+
 				cfgPkg = config.ConfigPackage{
 					Name:                  pkg,
 					MinCoveragePercentage: cfg.MinCoveragePercentage,
@@ -209,9 +208,9 @@ func (v Verifier) PrintFunctionReport(functions []profile.FunctionCoverage) erro
 		)
 
 		if v.PrintSrc {
-			filePath := filepath.Join(build.Default.GOPATH, "src", function.Function.SrcPath)
-
+			filePath := function.Function.SrcPath
 			src, err := ioutil.ReadFile(filePath)
+
 			if err != nil {
 				return err
 			}

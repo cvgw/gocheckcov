@@ -49,6 +49,8 @@ func (p Parser) RecordFunctionCoverage(functions []functions.Function) []Functio
 		if p.Profile != nil {
 			fc = p.recordCoverageHits(fc, function)
 			fc.Profile = p.Profile
+		} else {
+			log.Debugf("profile is blank for function %v", function.Name)
 		}
 
 		if int(fc.StatementCount) != len(function.Statements) {
@@ -87,7 +89,9 @@ func (p Parser) recordCoverageHits(fc FunctionCoverage, function functions.Funct
 			continue
 		}
 
+		log.Debugf("function %v matched with block %v", function.Name, block)
 		fc.StatementCount += int64(block.NumStmt)
+
 		if block.Count > 0 {
 			fc.CoveredCount += int64(block.NumStmt)
 		}

@@ -29,7 +29,7 @@ func Test_NodeFromFilePath_bad_path(t *testing.T) {
 	srcPath := "foo.go"
 
 	fset := token.NewFileSet()
-	_, err := NodeFromFilePath(srcPath, "", fset)
+	_, err := NodeFromFilePath(srcPath, fset)
 	g.Expect(err).ToNot(BeNil())
 }
 
@@ -59,7 +59,7 @@ func Meow(x, y int) bool {
 	}
 
 	fset := token.NewFileSet()
-	_, err = NodeFromFilePath(srcPath, "", fset)
+	_, err = NodeFromFilePath(srcPath, fset)
 	g.Expect(err).ToNot(BeNil())
 }
 
@@ -91,7 +91,7 @@ func Meow(x, y int) bool {
 	}
 
 	fset := token.NewFileSet()
-	astFile, err := NodeFromFilePath(srcPath, "", fset)
+	astFile, err := NodeFromFilePath(srcPath, fset)
 	g.Expect(err).To(BeNil())
 	g.Expect(astFile).ToNot(BeNil())
 }

@@ -19,7 +19,6 @@ import (
 	"go/token"
 	"io/ioutil"
 	"path/filepath"
-	"strings"
 	"testing"
 
 	"github.com/cvgw/gocheckcov/pkg/coverage/parser/profile"
@@ -170,14 +169,14 @@ func Meow(x, y int) bool {
 
 			fset := token.NewFileSet()
 
-			res, err := MapPackagesToFunctions(tc.covPath, []string{tc.srcPath}, fset, "")
+			res, err := MapPackagesToFunctions(tc.covPath, []string{tc.srcPath}, fset)
 			if tc.expectErr {
 				g.Expect(err).ToNot(BeNil())
 			} else {
 				g.Expect(err).To(BeNil())
 				g.Expect(res).ToNot(BeNil())
 				g.Expect(res).To(HaveLen(1))
-				g.Expect(res).To(HaveKey(strings.TrimPrefix(tc.dir, "/")))
+				g.Expect(res).To(HaveKey(tc.dir))
 			}
 		})
 	}

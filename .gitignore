@@ -1,0 +1,6 @@
+.envrc
+cp.out
+gocheckcov
+config.yaml
+profile.out
+*.swp

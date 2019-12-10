@@ -1,0 +1,4 @@
+min_coverage_percentage: 50
+packages:
+- name: github.com/cvgw/gocheckcov/pkg/coverage/analyzer
+  min_coverage_percentage: 80

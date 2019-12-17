@@ -16,12 +16,10 @@ package files
 
 import (
 	"fmt"
-	"go/build"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
-	"strings"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -90,7 +88,6 @@ func FilesForPath(dir string, ignoreDirs dirsToIgnore) ([]string, error) {
 }
 
 func recusiveFilesForPath(dir string, ignoreDirs dirsToIgnore) ([]string, error) {
-	goPath := build.Default.GOPATH
 	files := make([]string, 0)
 
 	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
@@ -108,7 +105,7 @@ func recusiveFilesForPath(dir string, ignoreDirs dirsToIgnore) ([]string, error)
 				if regexp.MustCompile("_test.go$").Match([]byte(path)) {
 					return nil
 				}
-				path = strings.TrimPrefix(path, fmt.Sprintf("%v/", filepath.Join(goPath, "src")))
+
 				files = append(files, path)
 			}
 		}
@@ -121,8 +118,6 @@ func recusiveFilesForPath(dir string, ignoreDirs dirsToIgnore) ([]string, error)
 }
 
 func filesForDir(dir string) ([]string, error) {
-	goPath := build.Default.GOPATH
-
 	fileInfos, err := ioutil.ReadDir(dir)
 	if err != nil {
 		return nil, err
@@ -142,7 +137,6 @@ func filesForDir(dir string) ([]string, error) {
 				}
 
 				path := filepath.Join(dir, fi.Name())
-				path = strings.TrimPrefix(path, fmt.Sprintf("%v/", filepath.Join(goPath, "src")))
 				files = append(files, path)
 			}
 		}

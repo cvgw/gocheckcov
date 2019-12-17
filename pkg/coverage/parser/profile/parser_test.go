@@ -171,7 +171,7 @@ meow
 			}
 			fset := token.NewFileSet()
 
-			res, err := goparser.NodeFromFilePath("", srcFilePath, fset)
+			res, err := goparser.NodeFromFilePath(srcFilePath, fset)
 
 			if tc.expectErr {
 				g.Expect(err).ToNot(BeNil())

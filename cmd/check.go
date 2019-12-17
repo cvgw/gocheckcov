@@ -17,13 +17,11 @@ package cmd
 import (
 	"bufio"
 	"fmt"
-	"go/build"
 	"go/token"
 	"io"
 	"io/ioutil"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"strings"
 	"sync"
 
@@ -75,7 +73,7 @@ func runCheckCommand(args []string) error {
 	if profilePath == "" {
 		pf, e := runTestsAndGenerateProfile(srcPath)
 		if e != nil {
-			return e
+			return fmt.Errorf("could not run tests %v", e)
 		}
 
 		profilePath = pf.Name()
@@ -88,9 +86,8 @@ func runCheckCommand(args []string) error {
 	}
 
 	fset := token.NewFileSet()
-	goSrc := filepath.Join(build.Default.GOPATH, "src")
 
-	packageToFunctions, err := analyzer.MapPackagesToFunctions(profilePath, projectFiles, fset, goSrc)
+	packageToFunctions, err := analyzer.MapPackagesToFunctions(profilePath, projectFiles, fset)
 	if err != nil {
 		log.Print(err)
 		return err
@@ -113,7 +110,6 @@ func runCheckCommand(args []string) error {
 		PrintFunctions: printFunctions,
 		PrintSrc:       printSrc,
 		MinCov:         minCov,
-		GoSrcPath:      goSrc,
 	}
 
 	if _, err := v.ReportCoverage(packageToFunctions, printFunctions, cfContent); err != nil {
@@ -192,13 +188,7 @@ func runTestsAndGenerateProfile(srcPath string) (*os.File, error) {
 		"-coverprofile=" + f.Name(),
 	}
 
-	absPath, err := filepath.Abs(srcPath)
-	if err != nil {
-		return nil, err
-	}
-
-	goSrcPath := filepath.Join(build.Default.GOPATH, "src")
-	pkgPath := strings.TrimPrefix(strings.TrimPrefix(absPath, goSrcPath), "/")
+	pkgPath := srcPath
 	args = append(args, pkgPath)
 	c := exec.Command("go", args...)
 

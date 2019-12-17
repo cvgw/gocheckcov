@@ -19,13 +19,12 @@ import (
 	"go/parser"
 	"go/token"
 	"io/ioutil"
-	"path/filepath"
 
 	log "github.com/sirupsen/logrus"
 )
 
-func NodeFromFilePath(filePath, goSrcPath string, fset *token.FileSet) (*ast.File, error) {
-	pFilePath := filepath.Join(goSrcPath, filePath)
+func NodeFromFilePath(filePath string, fset *token.FileSet) (*ast.File, error) {
+	pFilePath := filePath
 
 	src, err := ioutil.ReadFile(pFilePath)
 	if err != nil {
